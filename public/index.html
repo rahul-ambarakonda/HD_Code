@@ -12,191 +12,56 @@
     <meta property="og:url" content="https://beacon.example/">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="theme-color" content="#1D7A8C">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%231D7A8C'/%3E%3C/svg%3E"><!-- inline SVG dot -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%231D7A8C'/></svg>">
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
 
     <header class="site-header">
-        <div class="site-header__inner">
-            <a href="#top" class="site-header__wordmark">Beacon</a>
-            <nav class="site-header__nav">
-                <ul class="site-header__nav-list">
-                    <li class="site-header__nav-item"><a href="#features" class="btn--secondary">Features</a></li>
-                    <li class="site-header__nav-item"><a href="#pricing" class="btn--secondary">Pricing</a></li>
-                    <li class="site-header__nav-item"><a href="#faq" class="btn--secondary">FAQ</a></li>
-                </ul>
-                <div class="site-header__button">
-                    <a href="#waitlist" class="btn--secondary">Join waitlist</a>
-                </div>
-            </nav>
+        <div class="container">
+            <div class="site-header__content">
+                <a href="#top" class="site-header__wordmark"><span>&#9679;</span> Beacon</a>
+                <nav class="site-header__nav">
+                    <a href="#features" class="btn btn--secondary">Features</a>
+                    <a href="#pricing" class="btn btn--secondary">Pricing</a>
+                    <a href="#faq" class="btn btn--secondary">FAQ</a>
+                </nav>
+                <a href="#waitlist" class="btn btn--secondary site-header__waitlist-btn">Join waitlist</a>
+            </div>
         </div>
     </header>
 
     <main id="main">
-        <section id="pricing" aria-labelledby="pricing-heading" class="section" style="background-color: var(--color-surface);">
-            <div class="container">\
-                <h2 id="pricing-heading">Priced per check, not per seat.</h2>\
-                <p class="text-lead">Invite the whole team. You pay for what we monitor.</p>
-
-                <div class="plan-grid">
-                    <!-- Solo Plan Card -->
-                    <div class="plan-card card">
-                        <h3>Solo</h3>
-                        <div class="plan-card__price">
-                            <span class="text-h2">$0</span>
-                            <span class="text-small" style="color: var(--color-ink-faint);">forever</span>
-                        </div>
-                        <ul>
-                            <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg> 3 checks</li>
-                            <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></polyline></svg> 60-second interval</li>
-                            <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></polyline></svg> Email alerts</li>
-                            <li><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"20 6 9 17 4 12\"></polyline></polyline></svg> 7-day history</li>
-                        </ul>
-                        <a href=\"#waitlist\" class=\"btn btn--primary\">Join the waitlist</a>
-                    </div>
-
-                    <!-- Team Plan Card (Featured) -->
-                    <div class=\"plan-card card plan-card--featured\">
-                        <div class=\"chip chip--signal\">Most popular</div>
-                        <h3>Team</h3>
-                        <div class=\"plan-card__price\">
-                            <span class=\"text-h2\">$19</span>
-                            <span class=\"text-small\" style=\"color: var(--color-ink-faint);\">per month</span>
-                        </div>
-                        <ul>
-                            <li><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"20 6 9 17 4 12\"></polyline></polyline></svg> 25 checks</li>
-                            <li><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"20 6 9 17 4 12\"></polyline></polyline></svg> 30-second interval</li>
-                            <li><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"20 6 9 17 4 12\"></polyline></polyline></svg> SMS and call alerts</li>
-                            <li><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"20 6 9 17 4 12\"></polyline></polyline></svg> 90-day history</li>
-                        </ul>
-                        <a href=\"#waitlist\" class=\"btn btn--primary\">Join the waitlist</a>
-                    </div>
-
-                    <!-- Business Plan Card -->
-                    <div class=\"plan-card card\">
-                        <h3>Business</h3>
-                        <div class=\"plan-card__price\">
-                            <span class=\"text-h2\">$79</span>
-                            <span class=\"text-small\" style=\"color: var(--color-ink-faint);\">per month</span>
-                        </div>
-                        <ul>
-                            <li><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"20 6 9 17 4 12\"></polyline></polyline></svg> 200 checks</li>
-                            <li><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"20 6 9 17 4 12\"></polyline></polyline></svg> 15-second interval</li>
-                            <li><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"20 6 9 17 4 12\"></polyline></polyline></svg> Status page on your domain</li>
-                            <li><svg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"20 6 9 17 4 12\"></polyline></polyline></svg> 1-year history</li>
-                        </ul>
-                        <a href=\"#waitlist\" class=\"btn btn--primary\">Join the waitlist</a>
-                    </div>
-                </div>
-                <p class=\"text-small\" style=\"color: var(--color-ink-soft); text-align: center; margin-top: var(--space-6);\">These prices are what we intend to charge. Nothing is billed during the waitlist, and we will tell you before that changes.</p>
-            </div>
-        </section>
-
-        <section id=\"faq\" aria-labelledby=\"faq-heading\" class=\"section\" style=\"background-color: var(--color-surface-sunken);\">\
-            <div class=\"container faq__content\">\
-                <h2 id=\"faq-heading\" class=\"text-h2\" style=\"margin-bottom: var(--space-6);\">Questions people have asked.</h2>\
-
-                <details class=\"faq__item\">\
-                    <summary class=\"faq__question text-h3\">When does Beacon launch? <svg class=\"faq__chevron\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"6 9 12 15 18 9\"></polyline></svg></summary>\
-                    <p class=\"text-body\" style=\"color: var(--color-ink-soft);\">We are aiming for the first half of 2027. The\
-   waitlist is how we decide who gets in first and roughly how many checks we\
-   need to be ready for.</p>\
-                </details>\
-
-                <details class=\"faq__item\">\
-                    <summary class=\"faq__question text-h3\">Do I need to install anything? <svg class=\"faq__chevron\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"6 9 12 15 18 9\"></polyline></svg></summary>\
-                    <p class=\"text-body\" style=\"color: var(--color-ink-soft);\">No. Beacon calls your public endpoints\
-   from the outside, the same way your customers do. There is no agent, no\
-   sidecar and no code change.</p>\
-                </details>\
-
-                <details class=\"faq__item\">\
-                    <summary class=\"faq__question text-h3\">What counts as a check? <svg class=\"faq__chevron\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"6 9 12 15 18 9\"></polyline></svg></summary>\
-                    <p class=\"text-body\" style=\"color: var(--color-ink-soft);\">One URL, checked on one interval. A homepage\
-   and an API health route are two checks.</p>\
-                </details>\
-
-                <details class=\"faq__item\">\
-                    <summary class=\"faq__question text-h3\">Will you sell my email address? <svg class=\"faq__chevron\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"6 9 12 15 18 9\"></polyline></svg></summary>\
-                    <p class=\"text-body\" style=\"color: var(--color-ink-soft);\">No. It goes in one file on one server\
-   and it is used to send you one launch email. Reply to that email with the word\
-   \"remove\" and it is deleted.</p>\
-                </details>\
-
-                <details class=\"faq__item\">\
-                    <summary class=\"faq__question text-h3\">Who is building this? <svg class=\"faq__chevron\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><polyline points=\"6 9 12 15 18 9\"></polyline></svg></summary>\
-                    <p class=\"text-body\" style=\"color: var(--color-ink-soft);\">Two engineers who have carried a pager for a\
-   combined fourteen years and have opinions about being woken up\
-   unnecessarily.</p>\
-                </details>\
-            </div>\
-        </section> <!-- End of FAQ section -->
-
-        <section id="waitlist" aria-labelledby="waitlist-heading" class="section" style="background-color: var(--color-surface);">
-            <div class="container">
-                <div class="card" style="max-width: 560px; margin-inline: auto; text-align: center;">
-                    <h2 id="waitlist-heading">Get the launch email.</h2>
-                    <p class="text-lead" style="color: var(--color-ink-soft); margin-bottom: var(--space-6);">One email when Beacon opens. Nothing else, ever.</p>
-
-                    <form method="post" action="/api/waitlist" class="waitlist-form">
-                        <div class="field">
-                            <label for="email-input" class="field__label">Email address</label>
-                            <input type="email" id="email-input" name="email" placeholder="you@company.com" autocomplete="email" inputmode="email" aria-describedby="email-help email-error" class="field__input">
-                            <div id="email-help" class="field__help">We will only use this to tell you when Beacon is ready.</div>
-                            <div id="email-error" class="field__error" role="alert"></div>
-                        </div>
-                        <button type="submit" class="btn btn--primary waitlist-form__button">Join the waitlist</button>
-                    </form>
-
-                    <p class="text-small" style="color: var(--color-ink-faint); margin-top: var(--space-5);">No newsletter, no partner offers, no tracking pixels.</p>
-                    <div id="waitlist-status" role="status" aria-live="polite" class="waitlist-status" style="margin-top: var(--space-4);"></div>
-                </div>
-            </div>
-        </section>
-
+        <!-- Page sections will go here -->
     </main>
 
-    <footer class=\"site-footer\">\
-        <div class=\"site-footer__inner\">\
-            <div class=\"site-footer__col site-footer__col--brand\">\
-                <a href=\"#top\" class=\"site-footer__wordmark--footer\">Beacon</a>\
-                <p class=\"site-footer__description\">Uptime monitoring that wakes you up only\
-   when it should.</p>\
-                <p class=\"site-footer__copyright\">© 2026 Beacon. Not a real product.</p>\
-            </div>\
-            <div class=\"site-footer__col\">\
-                <h3 class=\"site-footer__heading\">Product</h3>\
-                <ul class=\"site-footer__nav-list\">\
-                    <li><a href=\"#features\">Features</a></li>\
-                    <li><a href=\"#pricing\">Pricing</a></li>\
-                    <li><a href=\"#faq\">FAQ</a></li>\
-                </ul>\
-            </div>\
-            <div class=\"site-footer__col\">\
-                <h3 class=\"site-footer__heading\">Legal</h3>\
-                <ul class=\"site-footer__nav-list\">\
-                    <li><a href=\"#\">Privacy</a></li>\
-                    <li><a href=\"#\">Terms</a></li>
-                </ul>
-                <p class=\"site-footer__legal-caption\">Coming before launch.</p>
+    <footer class="site-footer">
+        <div class="container">
+            <div class="site-footer__content">
+                <div class="site-footer__brand">
+                    <span class="site-footer__wordmark"><span>&#9679;</span> Beacon</span>
+                    <p class="site-footer__description">Uptime monitoring that wakes you up only when it should.</p>
+                </div>
+                <div class="site-footer__column">
+                    <h3 class="site-footer__heading">Product</h3>
+                    <ul class="site-footer__links">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="site-footer__column">
+                    <h3 class="site-footer__heading">Legal</h3>
+                    <ul class="site-footer__links">
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                    </ul>
+                    <p class="site-footer__caption">Coming before launch.</p>
+                </div>
             </div>
+            <p class="site-footer__copyright">© 2026 Beacon. Not a real product.</p>
         </div>
     </footer>
-    <script>
-        // Simple JS for sticky header border
-        const header = document.querySelector('.site-header');
-        if (header) {
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 8) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-            });
-        }
-    </script>
-    <script type="module" src="/app.js"></script>
 </body>
 </html>

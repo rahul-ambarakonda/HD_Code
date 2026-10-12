@@ -1,27 +1,28 @@
 import express from 'express';
-import { router as healthRouter } from '../src/routes/health.js';
-import helmet from 'helmet'; // Import helmet
+import helmet from 'helmet';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Helper for logging
+const log = (event, fields = {}) => {
+  console.log(JSON.stringify({ event, ...fields }));
+};
+
+// Determine __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-const NODE_ENV = process.env.NODE_ENV || 'development';
 
-// Log helper
-function log(event, fields = {}) {
-  console.log(JSON.stringify({
-    timestamp: new Date().toISOString(),
-    environment: NODE_ENV,
-    event,
-    ...fields,
-  }));
-}
+// Trust proxy for IP addresses (nginx will be in front)
+app.set('trust proxy', 1);
 
-// Apply helmet for security
+// Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      imgSrc: ["'self'", "data:"],
+      imgSrc: ["'self'", 'data:'],
       styleSrc: ["'self'"],
       scriptSrc: ["'self'"],
       formAction: ["'self'"],
@@ -30,33 +31,39 @@ app.use(helmet({
   },
 }));
 
-// Trust proxy for rate limiting (if deployed behind Nginx)
-app.set('trust proxy', 1);
+// Serve static files from the public directory
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
-// Serve static files
-app.use(express.static('public'));
+// Basic route for the root
+app.get('/', (req, res) => {
+  log('page_view', { path: '/', ua: req.headers['user-agent'], ip: req.ip });
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
 
-// Routes
-app.use('/healthz', healthRouter);
-
-// Error handling middleware
+// Central error-handling middleware
 app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+  const errorCode = err.errorCode || 'SERVER_ERROR';
+  const errorMessage = err.message || 'Something went wrong. Try again shortly.';
+
   log('server_error', {
-    code: err.code || 'UNKNOWN_ERROR',
-    message: err.message || 'Something went wrong.',
-    stack: NODE_ENV === 'development' ? err.stack : undefined,
+    code: errorCode,
+    message: errorMessage,
+    path: req.path,
+    method: req.method,
+    ip: req.ip,
+    stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack, // Minimal stack in prod
   });
-  res.status(err.statusCode || 500).json({
+
+  res.status(statusCode).json({
     error: {
-      code: err.code || 'SERVER_ERROR',
-      message: err.message || 'Something went wrong. Try again shortly.',
+      code: errorCode,
+      message: errorMessage,
     },
   });
 });
 
-// Start the server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  log('server_started', { port: PORT });
+  log('server_started', { port: PORT, env: process.env.NODE_ENV || 'development' });
 });
-
-export { app }; // Export for testing

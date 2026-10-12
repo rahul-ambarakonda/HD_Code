@@ -31,30 +31,18 @@ describe('isValidEmail', () => {
     assert.strictEqual(isValidEmail('   '), false);
   });
 
-  it('should return false for an email longer than 254 characters', () => {
-    const longLocalPart = 'a'.repeat(200);
-    const longDomain = 'b'.repeat(40);
-    const longEmail = `${longLocalPart}@${longDomain}.com`; // 200 + 1 + 40 + 4 = 245 characters
-    assert.strictEqual(isValidEmail(longEmail), true);
+  it('should return true for an email of exactly 254 characters', () => {
+    // A 254-character email: 61 chars local, 1 '@', 188 chars domain, 4 chars '.com'
+    const email254Chars = 'a'.repeat(61) + '@' + 'b'.repeat(188) + '.com';
+    assert.strictEqual(email254Chars.length, 254);
+    assert.strictEqual(isValidEmail(email254Chars), true);
+  });
 
-    const evenLongerEmail = `longer${longLocalPart}@${longDomain}.com`; // 251 characters
-    assert.strictEqual(isValidEmail(evenLongerEmail), true);
-
-    const tooLongEmail = `a${longLocalPart}@${longDomain}.com`; // 246 characters
-    assert.strictEqual(isValidEmail(`too${longLocalPart}@${longDomain}.com`), true);
-
-    const maxLenEmail = 'a'.repeat(64) + '@' + 'b'.repeat(188) + '.com'; // 64+1+188+4 = 257 characters (example, need precise calculation)
-    // Let's create a 255 char email and test
-    const email255 = 'a'.repeat(61) + '@' + 'b'.repeat(188) + '.com'; // 61 (local) + 1 (@) + 188 (domain) + 4 (.com) = 254 (wrong calculation above)
-    const email254 = 'a'.repeat(61) + '@' + 'b'.repeat(187) + '.com'; // 61 + 1 + 187 + 4 = 253
-    assert.strictEqual(isValidEmail(email254), true); // Valid length
-
-    const email255Longer = 'a'.repeat(62) + '@' + 'b'.repeat(187) + '.com'; // 62 + 1 + 187 + 4 = 254
-    assert.strictEqual(isValidEmail(email255Longer), true);
-
-    // Actual 255 char email
-    const emailOver254 = 'a'.repeat(62) + '@' + 'b'.repeat(188) + '.com'; // 62+1+188+4 = 255
-    assert.strictEqual(isValidEmail(emailOver254), false);
+  it('should return false for an email longer than 254 characters (255 chars)', () => {
+    // A 255-character email: 62 chars local, 1 '@', 188 chars domain, 4 chars '.com'
+    const email255Chars = 'a'.repeat(62) + '@' + 'b'.repeat(188) + '.com';
+    assert.strictEqual(email255Chars.length, 255);
+    assert.strictEqual(isValidEmail(email255Chars), false);
   });
 
   it('should return false for a non-string input (null)', () => {

@@ -12,7 +12,7 @@
     <meta property="og:url" content="https://beacon.example/">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="theme-color" content="#1D7A8C">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50%' cy='50%' r='50%' fill='%231D7A8C'/></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><circle cx=\'50%\' cy=\'50%\' r=\'50%\' fill=\'%231D7A8C\'/></svg>">
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
@@ -45,8 +45,32 @@
                     </div>
                     <svg class="hero__pulse-graphic" width="480" height="120" viewBox="0 0 480 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <path d="M0 60H160L210 10L270 110L320 60H480" stroke="var(--color-signal)" stroke-width="4"/>
-                        <path d="M0 60H480" stroke="var(--color-border)" stroke-width=\"2\"/>
+                        <path d="M0 60H480" stroke="var(--color-border)" stroke-width="2"/>
                     </svg>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="section section--sunken" aria-labelledby="features-heading">
+            <div class="container">
+                <h2 id="features-heading" class="section__heading">Three things, done properly.</h2>
+                <p class="text-lead section__intro">We are not building an observability platform. We are building the part that wakes you up.</p>
+                <div class="feature-grid">
+                    <div class="feature-card card">
+                        <svg class="feature-card__icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle></svg>
+                        <h3 class="text-h3">Checks that mean something</h3>
+                        <p class="text-body color-ink-soft">Every 30 seconds from Mumbai, Frankfurt and Oregon. A check fails only when two of the three agree it failed, so a bad route in one region does not page you at 3am.</p>
+                    </div>
+                    <div class="feature-card card">
+                        <svg class="feature-card__icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                        <h3 class="text-h3">Alerts that reach a human</h3>
+                        <p class="text-body color-ink-soft">SMS first, then a phone call if nobody acknowledges within five minutes. Email is a courtesy copy, not the alert.</p>
+                    </div>
+                    <div class="feature-card card">
+                        <svg class="feature-card__icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        <h3 class="text-h3">A status page you can point at</h3>
+                        <p class="text-body color-ink-soft">One public page per project, on your own domain, updated automatically when a check fails. No copy-paste incident updates.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -98,13 +122,13 @@
                 <div class="site-footer__column">
                     <h3 class="site-footer__heading">Legal</h3>
                     <ul class="site-footer__links">
-                        <li><a href=\"#\">Privacy</a></li>
-                        <li><a href=\"#\">Terms</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
                     </ul>
-                    <p class=\"site-footer__caption\">Coming before launch.</p>
+                    <p class="site-footer__caption">Coming before launch.</p>
                 </div>
             </div>
-            <p class=\"site-footer__copyright\">© 2026 Beacon. Not a real product.</p>
+            <p class="site-footer__copyright">© 2026 Beacon. Not a real product.</p>
         </div>
     </footer>
 </body>

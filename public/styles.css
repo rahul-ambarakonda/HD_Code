@@ -209,6 +209,10 @@ input, button, textarea, select {
   scroll-margin-top: 80px; /* For sticky header offset */
 }
 
+.section--sunken {
+  background-color: var(--color-surface-sunken);
+}
+
 /* Responsive section padding */
 @media (max-width: 640px) {
   .section {
@@ -379,14 +383,19 @@ input, button, textarea, select {
     }
 }
 
-/* FAQ Section Styling */
-.faq__content {
+/* FAQ Section Specifics */
+.faq__list {
   max-width: 720px;
   margin-inline: auto;
+  margin-top: var(--space-6); /* Gap between heading and content */
 }
 
 .faq__item + .faq__item {
   border-top: var(--border);
+}
+
+.faq__item:first-child {
+    border-top: var(--border); /* Ensure the first item also has a top border */
 }
 
 .faq__question {
@@ -396,9 +405,10 @@ input, button, textarea, select {
   cursor: pointer;
   padding-block: var(--space-4);
   font-size: var(--text-h3);
-  line-height: var(--text-h3-line-height, 1.35);
-  font-weight: var(--text-h3-font-weight, 650);
+  font-weight: 650; /* from --text-h3 */
+  line-height: 1.35; /* from --text-h3 */
   color: var(--color-ink);
+  /* The summary itself should be the focus target */
 }
 
 .faq__question::-webkit-details-marker,
@@ -406,29 +416,35 @@ input, button, textarea, select {
   display: none;
 }
 
-.faq__chevron {
+.faq__question::after {
+  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%234B5765' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='9 18 15 12 9 6'%3E%3C/polyline%3E%3C/svg%3E");
+  display: block;
+  width: 24px;
+  height: 24px;
   transition: transform var(--duration-fast) var(--ease);
-  color: var(--color-ink);
+  flex-shrink: 0;
+  margin-left: var(--space-3); /* Space between text and chevron */
 }
 
-details[open] .faq__chevron {
+details[open] .faq__question::after {
   transform: rotate(90deg);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .faq__chevron {
+  .faq__question::after {
     transition-duration: 0ms !important;
   }
 }
 
-.faq__item p {
+.faq__answer {
   padding-bottom: var(--space-4);
   padding-top: var(--space-2);
-  max-width: none; /* Override global paragraph max-width */
   color: var(--color-ink-soft);
   font-size: var(--text-body);
-  line-height: var(--text-body-line-height, 1.6);
-  font-weight: var(--text-body-font-weight, 400);
+  line-height: 1.6; /* from --text-body */
+  font-weight: 400; /* from --text-body */
+  max-width: none; /* Override global paragraph max-width */
+  margin-bottom: 0; /* Remove default paragraph margin */
 }
 
 /* Waitlist Form Styling */
@@ -454,7 +470,7 @@ details[open] .faq__chevron {
   color: var(--color-ink-soft);
   margin-bottom: var(--space-2);
   display: block; /* Ensure label takes its own line */
-  text-align: left; /* Override card's center text */
+  text-align: left; /* Override card\'s center text */
 }
 
 .field__input {
@@ -485,14 +501,14 @@ details[open] .faq__chevron {
   font-size: var(--text-small);
   color: var(--color-ink-faint);
   margin-top: var(--space-2);
-  text-align: left; /* Override card's center text */
+  text-align: left; /* Override card\'s center text */
 }
 
 .field__error {
   font-size: var(--text-small);
   color: var(--color-negative);
   margin-top: var(--space-2);
-  text-align: left; /* Override card's center text */
+  text-align: left; /* Override card\'s center text */
 }
 
 .waitlist-form__button {
@@ -588,7 +604,7 @@ details[open] .faq__chevron {
 
 .site-header__wordmark {
   font-family: var(--font-sans);
-  font-size: var(--text-h3); /* A good base size for a wordmark that isn't the hero headline */
+  font-size: var(--text-h3); /* A good base size for a wordmark that isn\'t the hero headline */
   font-weight: 800; /* Display weight from wordmark spec */
   letter-spacing: -0.02em; /* Tight letter-spacing from wordmark spec */
   color: var(--color-ink);
@@ -600,7 +616,7 @@ details[open] .faq__chevron {
 
 .site-header__wordmark span {
   color: var(--color-accent); /* Lamp dot color */
-  font-size: 0.8em; /* Adjust dot size relative to text */
+  font-size: 0.8em;
   line-height: 1;
 }
 

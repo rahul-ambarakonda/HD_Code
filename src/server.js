@@ -6,8 +6,8 @@ import express from 'express';
 import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { waitlistRouter } from './routes/waitlist.js';
-import { router as healthRouter } from './routes/health.js'; // Corrected import
+import { router as waitlistRouter } from './routes/waitlist.js'; // Corrected import
+import { router as healthRouter } from './routes/health.js';
 
 // Helper for logging
 const log = (event, fields = {}) => {
@@ -37,9 +37,12 @@ app.use(helmet({
   },
 }));
 
+// Body parsing middleware (capped at 1kb)
+app.use(express.json({ limit: '1kb' }));
+
 // Register routes
-app.use('/healthz', healthRouter); // Corrected usage
-app.use('/api/waitlist', waitlistRouter(log));
+app.use('/healthz', healthRouter);
+app.use('/api/waitlist', waitlistRouter); // Corrected usage
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, '..', 'public')));

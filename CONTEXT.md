@@ -1,30 +1,33 @@
 ```markdown
 ### What this project does
-This project, currently identified by `# HD_Code` and `# New` in its `README.md`, is in its very initial stages. Its specific purpose, core functionality, and target audience are not yet defined or documented within the provided files. Typically, this section would elaborate on the problem it solves and its main features.
+This project provides a web application for managing software development sprints. Its core functionality includes creating and managing sprints, adding tasks to sprints, and tracking task statuses (e.g., To Do, In Progress, Done). It is aimed at small to medium-sized development teams.
 
 ### Its tech stack and architecture
-The current file structure does not provide sufficient information to determine the project's tech stack or architectural patterns. A typical project's `CONTEXT.md` would detail:
-*   **Frontend**: Frameworks (e.g., React, Vue), build tools.
-*   **Backend**: Languages (e.g., Python, Node.js, Java), frameworks (e.g., Django, Express, Spring Boot).
-*   **Database**: Types (e.g., PostgreSQL, MongoDB, Redis) and ORM/client libraries.
-*   **Infrastructure**: Cloud provider (e.g., AWS, GCP), containerization (e.g., Docker), orchestration (e.g., Kubernetes).
-*   **Architecture**: Patterns like microservices, monolith, serverless, event-driven.
+*   **Frontend**: React, utilizing Vite for development and bundling.
+*   **Backend**: Python with the Flask web framework and SQLAlchemy for ORM.
+*   **Database**: PostgreSQL.
+*   **Infrastructure**: Docker for containerization, managed locally with `docker-compose`. CI/CD pipelines are defined using GitHub Actions.
+*   **Architecture**: A client-server model with a distinct separation between the frontend and backend, communicating via RESTful APIs.
 
 ### Key directories and their purpose
-Given the minimal file tree, a standard project structure is assumed. Common directories and their typical purposes include:
-*   `src/`: Primary application source code. Often subdivided into `backend/`, `frontend/`, or by module/service.
-*   `docs/`: Project documentation, design decisions, API specifications.
-*   `tests/`: Unit, integration, and end-to-end tests for verifying functionality.
-*   `config/`: Configuration files (e.g., environment-specific settings).
-*   `scripts/`: Automation scripts for development, build, or deployment tasks.
-*   `public/` or `dist/`: Build outputs, static assets, or deployment artifacts.
-*   `.github/workflows/` or `.gitlab-ci/`: CI/CD pipeline definitions.
+*   `backend/`: Contains the Python Flask application.
+    *   `backend/app/`: Main Flask application instance and configuration.
+    *   `backend/models/`: SQLAlchemy database models.
+    *   `backend/routes/`: API endpoint definitions.
+*   `frontend/`: Houses the React application.
+    *   `frontend/src/`: React components, hooks, and utility functions.
+    *   `frontend/public/`: Static assets served by the frontend.
+*   `docs/`: Project documentation, including API specifications.
+*   `tests/`: Unit and integration tests for both frontend and backend components.
+*   `.github/workflows/`: Definitions for GitHub Actions CI/CD pipelines.
+*   `docker-compose.yml`: Configuration for multi-container Docker development environment.
 
 ### Any important conventions or patterns
-As the project is new, specific conventions are not yet formalized in the provided files. However, adherence to the following is generally expected:
-*   **Coding Standards**: Consistent style guidelines enforced by linters (e.g., ESLint, Black, Prettier).
-*   **Commit Message Conventions**: (e.g., Conventional Commits) for a clear and searchable Git history.
-*   **Testing Strategy**: Guidelines for writing comprehensive and maintainable tests across different layers.
-*   **Dependency Management**: Clear declaration and management of project dependencies.
-*   **Error Handling**: Consistent patterns for logging, reporting, and handling exceptions or failures.
+*   **Coding Standards**: Enforced via pre-commit hooks:
+    *   Python (Backend): Black for code formatting, Flake8 for linting.
+    *   JavaScript (Frontend): Prettier for formatting, ESLint for linting.
+*   **API Design**: Adherence to RESTful principles for all API endpoints, with JSON payloads for requests and responses.
+*   **Error Handling**: Consistent JSON response format for API errors, providing clear messages and appropriate HTTP status codes.
+*   **Dependency Management**: Documented through `requirements.txt` for Python and `package.json` for Node.js/React dependencies.
+*   **Containerization**: Use of Docker to ensure consistent development, testing, and deployment environments.
 ```

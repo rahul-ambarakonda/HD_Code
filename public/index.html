@@ -1,11 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beacon</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Beacon — uptime monitoring that wakes you up only when it should</title>
+    <meta name="description" content="Beacon checks your endpoints every 30 seconds from three regions and texts you the moment one stops answering. Join the waitlist.">
+    <link rel="canonical" href="https://beacon.example/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Beacon — know your site is down before your customers tell you">
+    <meta property="og:description" content="Checks every 30 seconds from three regions. SMS first, then a call. Join the waitlist.">
+    <meta property="og:url" content="https://beacon.example/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="theme-color" content="#1D7A8C">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%231D7A8C'/%3E%3C/svg%3E"><!-- inline SVG dot -->
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <p>Hello from Beacon!</p>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a href="#top" class="site-header__wordmark">Beacon</a>
+            <nav class="site-header__nav">
+                <ul class="site-header__nav-list">
+                    <li class="site-header__nav-item"><a href="#features" class="btn--secondary">Features</a></li>
+                    <li class="site-header__nav-item"><a href="#pricing" class="btn--secondary">Pricing</a></li>
+                    <li class="site-header__nav-item"><a href="#faq" class="btn--secondary">FAQ</a></li>
+                </ul>
+                <div class="site-header__button">
+                    <a href="#waitlist" class="btn--secondary">Join waitlist</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main">
+        <!-- Page sections will be injected here -->
+    </main>
+
+    <footer class="site-footer">
+        <div class="site-footer__inner">
+            <div class="site-footer__col site-footer__col--brand">
+                <a href="#top" class="site-footer__wordmark--footer">Beacon</a>
+                <p class="site-footer__description">Uptime monitoring that wakes you up only when it should.</p>
+                <p class="site-footer__copyright">© 2026 Beacon. Not a real product.</p>
+            </div>
+            <div class="site-footer__col">
+                <h3 class="site-footer__heading">Product</h3>
+                <ul class="site-footer__nav-list">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="site-footer__col">
+                <h3 class="site-footer__heading">Legal</h3>
+                <ul class="site-footer__nav-list">
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
+                </ul>
+                <p class="site-footer__legal-caption">Coming before launch.</p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // Simple JS for sticky header border
+        const header = document.querySelector('.site-header');
+        if (header) {
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 8) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        }
+    </script>
 </body>
 </html>

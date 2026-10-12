@@ -1,15 +1,6 @@
 import assert from 'node:assert';
 import { describe, it, before, after } from 'node:test';
-import { createServer } from '../../src/server.js'; // Assuming server.js exports the app directly or a factory
-
-// We need to import the actual app from server.js to test it.
-// Since server.js directly calls app.listen, we'll need a way to get the app instance.
-// A common pattern is to export the app itself, and have a separate script for `app.listen`.
-// Looking at src/server.js, it directly creates and listens, which makes testing tricky.
-// I'll assume that `src/server.js` exports the `app` instance as `export { app };` for testing purposes.
-// If not, I'd need to refactor src/server.js to make it testable.
-
-import app from '../../src/server.js'; // This import assumes server.js is refactored to export app
+import { createApp } from '../../src/server.js';
 
 describe('Waitlist API Endpoint', () => {
   let server;
@@ -17,19 +8,19 @@ describe('Waitlist API Endpoint', () => {
 
   // Before all tests, start the server on an ephemeral port
   before(async () => {
-    // Dynamically import the server to get the app instance
-    // This is a workaround for the current server.js structure that directly calls app.listen
-    // A proper refactor would involve src/server.js exporting a function to create the app
-    const { default: createAndStartApp } = await import('../../src/server.js');
-    const { app: expressApp, server: httpServer } = createAndStartApp(); // Assuming createAndStartApp returns { app, server }
-    server = httpServer;
+    const app = createApp();
+    server = await new Promise(resolve => {
+      const s = app.listen(0, () => resolve(s)); // Listen on ephemeral port
+    });
     const port = server.address().port;
     baseUrl = `http://localhost:${port}`;
   });
 
   // After all tests, close the server
   after(async () => {
-    await new Promise(resolve => server.close(resolve));
+    if (server) {
+      await new Promise(resolve => server.close(resolve));
+    }
   });
 
   it('should return 201 for a valid email', async () => {
@@ -86,8 +77,8 @@ describe('Waitlist API Endpoint', () => {
 
   it('should return 429 for rate limited requests', async () => {
     const emailBase = 'ratelimit';
+    // Make 5 requests within the window. Use different emails for each to avoid duplicate error.
     for (let i = 0; i < 5; i++) {
-      // Make 5 requests within the window
       await fetch(`${baseUrl}/api/waitlist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

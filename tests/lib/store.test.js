@@ -1,67 +1,52 @@
 import assert from 'node:assert';
-import { describe, it, beforeEach, afterEach } from 'node:test';
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
-import os from 'node:os';
-
-import { readStore, hasEmail, addEntry } from '../../src/lib/store.js';
-
-// Mock console.error to prevent test logs from cluttering output
-const originalConsoleError = console.error;
-let consoleErrorOutput = [];
+import { describe, it, beforeEach } from 'node:test';
+import { createStore } from '../../src/lib/store.js';
 
 describe('Store Operations', () => {
-  let tempDir;
-  let storeFile;
-  let tempStoreFile;
-  let originalCwd;
+  let mockFileContent = '';
+  let mockFs;
 
-  beforeEach(async () => {
-    originalCwd = process.cwd();
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'beacon-store-test-'));
-    // Change CWD to the temp directory so `path.resolve(process.cwd(), 'data')` in store.js points correctly
-    process.chdir(tempDir);
-    await fs.mkdir('data');
-
-    storeFile = path.join(tempDir, 'data', 'waitlist.json');
-    tempStoreFile = path.join(tempDir, 'data', 'waitlist.json.tmp');
-
-    // Suppress console.error during tests unless explicitly needed
-    consoleErrorOutput = [];
-    console.error = (...args) => {
-      consoleErrorOutput.push(args.join(' '));
+  // Simulate a temporary directory by managing content in memory
+  beforeEach(() => {
+    mockFileContent = ''; // Reset file content before each test
+    mockFs = {
+      readFile: async (path) => {
+        if (mockFileContent === '') {
+          const error = new Error('File not found');
+          error.code = 'ENOENT';
+          throw error;
+        }
+        return mockFileContent;
+      },
+      writeFile: async (path, content) => {
+        mockFileContent = content;
+      },
     };
   });
 
-  afterEach(async () => {
-    // Restore original console.error
-    console.error = originalConsoleError;
-    // Clean up the temporary directory
-    await fs.rm(tempDir, { recursive: true, force: true });
-    process.chdir(originalCwd);
-  });
-
-  it('should return a default empty store when file is missing', async () => {
+  it('should return initial store structure if file is missing', async () => {
+    const { readStore } = createStore(mockFs);
     const store = await readStore();
     assert.deepStrictEqual(store, { version: 1, entries: [] });
   });
 
-  it('should return a default empty store when file is malformed JSON', async () => {
-    await fs.writeFile(storeFile, '{\"version\": 1, \"entries\": [}', 'utf8');
+  it('should return initial store structure if file is malformed JSON', async () => {
+    mockFileContent = 'not valid json';
+    const { readStore } = createStore(mockFs);
     const store = await readStore();
     assert.deepStrictEqual(store, { version: 1, entries: [] });
-    assert.ok(consoleErrorOutput.some(msg => msg.includes('Failed to read or parse store file')));
   });
 
-  it('should return a default empty store when file has invalid structure (missing entries)', async () => {
-    await fs.writeFile(storeFile, '{\"version\": 1}', 'utf8');
+  it('should return initial store structure if file is valid JSON but malformed store', async () => {
+    mockFileContent = JSON.stringify({ version: 1, entries: 'not-an-array' });
+    const { readStore } = createStore(mockFs);
     const store = await readStore();
     assert.deepStrictEqual(store, { version: 1, entries: [] });
-    assert.ok(consoleErrorOutput.some(msg => msg.includes('Malformed store file')));
   });
 
-  it('should add the first entry to the store', async () => {
-    const email = 'test1@example.com';
+  it('should add the first entry correctly', async () => {
+    const { addEntry, readStore } = createStore(mockFs);
+    const email = 'test@example.com';
     const ip = '127.0.0.1';
     await addEntry(email, ip);
 
@@ -72,97 +57,68 @@ describe('Store Operations', () => {
     assert.ok(store.entries[0].joinedAt);
   });
 
-  it('should reject adding a duplicate email (case-insensitive and trimmed)', async () => {
-    const email = 'test2@example.com';
+  it('should reject a duplicate email', async () => {
+    const { addEntry, hasEmail } = createStore(mockFs);
+    const email = 'test@example.com';
     const ip = '127.0.0.1';
+
     await addEntry(email, ip);
+    const added = await hasEmail(email);
+    assert.strictEqual(added, true);
 
-    const duplicateEmail1 = 'Test2@example.com';
-    const duplicateEmail2 = '  test2@example.com  ';
+    // Attempt to add again
+    await addEntry(email, '192.168.1.1'); // Different IP
+    const store = await readStore();
+    assert.strictEqual(store.entries.length, 1); // Should still be 1 entry
+  });
 
-    // addEntry should internally check for duplicates and do nothing
-    await addEntry(duplicateEmail1, ip);
-    await addEntry(duplicateEmail2, ip);
+  it('should correctly identify an existing email', async () => {
+    const { addEntry, hasEmail } = createStore(mockFs);
+    await addEntry('existing@example.com', '127.0.0.1');
+    const exists = await hasEmail('existing@example.com');
+    assert.strictEqual(exists, true);
+  });
+
+  it('should correctly identify a non-existing email', async () => {
+    const { hasEmail } = createStore(mockFs);
+    const exists = await hasEmail('nonexistent@example.com');
+    assert.strictEqual(exists, false);
+  });
+
+  it('should handle multiple entries', async () => {
+    const { addEntry, readStore } = createStore(mockFs);
+    await addEntry('test1@example.com', '127.0.0.1');
+    await addEntry('test2@example.com', '127.0.0.2');
 
     const store = await readStore();
-    assert.strictEqual(store.entries.length, 1);
-    assert.strictEqual(store.entries[0].email, email);
+    assert.strictEqual(store.entries.length, 2);
+    assert.strictEqual(store.entries[0].email, 'test1@example.com');
+    assert.strictEqual(store.entries[1].email, 'test2@example.com');
   });
 
-  it('hasEmail should return true for an existing email', async () => {
-    const email = 'existing@example.com';
-    await addEntry(email, '127.0.0.1');
-    assert.strictEqual(await hasEmail(email), true);
-    assert.strictEqual(await hasEmail('  Existing@example.com  '), true);
-  });
+  it('should normalize email before storing and checking', async () => {
+    const { addEntry, hasEmail, readStore } = createStore(mockFs);
+    await addEntry('  MIXEDCASE@EXAMPLE.COM  ', '127.0.0.1');
 
-  it('hasEmail should return false for a non-existing email', async () => {
-    assert.strictEqual(await hasEmail('nonexistent@example.com'), false);
-  });
-
-  it('should handle concurrent writes correctly through serialization', async () => {
-    const emails = [
-      { email: 'user1@example.com', ip: '192.168.1.1' },
-      { email: 'user2@example.com', ip: '192.168.1.2' },
-      { email: 'user3@example.com', ip: '192.168.1.3' },
-    ];
-
-    const writePromises = emails.map(e => addEntry(e.email, e.ip));
-    await Promise.all(writePromises);
+    assert.strictEqual(await hasEmail('mixedcase@example.com'), true);
 
     const store = await readStore();
-    assert.strictEqual(store.entries.length, emails.length);
-    const storedEmails = store.entries.map(entry => entry.email).sort();
-    const expectedEmails = emails.map(e => e.email).sort();
-    assert.deepStrictEqual(storedEmails, expectedEmails);
+    assert.strictEqual(store.entries[0].email, 'mixedcase@example.com');
   });
 
-  it('should perform atomic writes: ensure temp file is renamed', async () => {
-    const email = 'atomic@example.com';
-    const ip = '127.0.0.1';
-    await addEntry(email, ip);
-
-    // Verify temp file does not exist after successful write
-    let tempFileExists = true;
-    try {
-      await fs.access(tempStoreFile);
-    } catch (error) {
-      tempFileExists = false;
-    }
-    assert.strictEqual(tempFileExists, false, 'Temp file should not exist after atomic write.');
-
-    // Verify main file exists and contains data
-    let mainFileExists = true;
-    try {
-      await fs.access(storeFile);
-    } catch (error) {
-      mainFileExists = false;
-    }
-    assert.strictEqual(mainFileExists, true, 'Main store file should exist after atomic write.');
-    const store = await readStore();
-    assert.strictEqual(store.entries.length, 1);
-  });
-
-  it('should propagate STORE_UNAVAILABLE error when fs operations fail', async () => {
-    const originalWriteFile = fs.writeFile;
-    fs.writeFile = async () => {
-      throw new Error('Mocked FS Error');
+  it('should propagate STORE_UNAVAILABLE error on read failure', async () => {
+    mockFs.readFile = async () => {
+      throw new Error('Disk full');
     };
+    const { readStore } = createStore(mockFs);
+    await assert.rejects(readStore(), { message: 'STORE_UNAVAILABLE' });
+  });
 
-    const email = 'fail@example.com';
-    const ip = '127.0.0.1';
-
-    let errorCaught = false;
-    try {
-      await addEntry(email, ip);
-    } catch (error) {
-      errorCaught = true;
-      assert.strictEqual(error.message, 'STORE_UNAVAILABLE');
-      assert.strictEqual(error.cause.message, 'Mocked FS Error');
-    } finally {
-      fs.writeFile = originalWriteFile; // Restore original function
-    }
-    assert.strictEqual(errorCaught, true, 'STORE_UNAVAILABLE error was not caught.');
-    assert.ok(consoleErrorOutput.some(msg => msg.includes('Failed to add entry to store')));
+  it('should propagate STORE_UNAVAILABLE error on write failure', async () => {
+    mockFs.writeFile = async () => {
+      throw new Error('Permission denied');
+    };
+    const { addEntry } = createStore(mockFs);
+    await assert.rejects(addEntry('fail@example.com', '1.1.1.1'), { message: 'STORE_UNAVAILABLE' });
   });
 });

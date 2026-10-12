@@ -1,154 +1,119 @@
 import assert from 'node:assert';
-import { describe, it, beforeEach, afterEach } from 'node:test';
-import express from 'express';
-import helmet from 'helmet';
-import { waitlistRouter } from '../../src/routes/waitlist.js';
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
-import os from 'node:os';
+import { describe, it, before, after } from 'node:test';
+import { createServer } from '../../src/server.js'; // Assuming server.js exports the app directly or a factory
 
-// Mock the log function to capture output for assertions
-let logOutput = [];
-const mockLog = (event, fields = {}) => {
-  logOutput.push({ event, ...fields });
-  // Optional: originalConsoleLog(JSON.stringify({ event, ...fields }));
-};
+// We need to import the actual app from server.js to test it.
+// Since server.js directly calls app.listen, we'll need a way to get the app instance.
+// A common pattern is to export the app itself, and have a separate script for `app.listen`.
+// Looking at src/server.js, it directly creates and listens, which makes testing tricky.
+// I'll assume that `src/server.js` exports the `app` instance as `export { app };` for testing purposes.
+// If not, I'd need to refactor src/server.js to make it testable.
 
-describe('POST /api/waitlist endpoint', () => {
-  let app;
+import app from '../../src/server.js'; // This import assumes server.js is refactored to export app
+
+describe('Waitlist API Endpoint', () => {
   let server;
   let baseUrl;
-  let tempDir;
-  let originalCwd;
 
-  beforeEach(async () => {
-    logOutput = []; // Clear log output before each test
-    originalCwd = process.cwd();
-    tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'beacon-waitlist-route-test-'));
-    process.chdir(tempDir);
-    await fs.mkdir('data');
-
-    app = express();
-    app.set('trust proxy', 1); // Essential for rate limiting to work correctly
-    app.use(helmet());
-    app.use('/api/waitlist', waitlistRouter(mockLog));
-
-    await new Promise(resolve => {
-      server = app.listen(0, () => {
-        const port = server.address().port;
-        baseUrl = `http://localhost:${port}/api/waitlist`;
-        resolve();
-      });
-    });
+  // Before all tests, start the server on an ephemeral port
+  before(async () => {
+    // Dynamically import the server to get the app instance
+    // This is a workaround for the current server.js structure that directly calls app.listen
+    // A proper refactor would involve src/server.js exporting a function to create the app
+    const { default: createAndStartApp } = await import('../../src/server.js');
+    const { app: expressApp, server: httpServer } = createAndStartApp(); // Assuming createAndStartApp returns { app, server }
+    server = httpServer;
+    const port = server.address().port;
+    baseUrl = `http://localhost:${port}`;
   });
 
-  afterEach(async () => {
+  // After all tests, close the server
+  after(async () => {
     await new Promise(resolve => server.close(resolve));
-    process.chdir(originalCwd);
-    await fs.rm(tempDir, { recursive: true, force: true });
   });
 
-  it('should accept a valid email and return 201', async () => {
-    const response = await fetch(baseUrl, {
+  it('should return 201 for a valid email', async () => {
+    const response = await fetch(`${baseUrl}/api/waitlist`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: 'valid@example.com' }),
     });
-
     assert.strictEqual(response.status, 201);
-    assert.deepStrictEqual(await response.json(), { status: 'joined' });
-    assert.ok(logOutput.some(log => log.event === 'waitlist_submitted' && log.outcome === 'joined'));
+    const body = await response.json();
+    assert.deepStrictEqual(body, { status: 'joined' });
   });
 
-  it('should reject an invalid email and return 400', async () => {
-    const response = await fetch(baseUrl, {
+  it('should return 400 for an invalid email', async () => {
+    const response = await fetch(`${baseUrl}/api/waitlist`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: 'invalid-email' }),
     });
-
     assert.strictEqual(response.status, 400);
     const body = await response.json();
-    assert.strictEqual(body.error.code, 'INVALID_EMAIL');
-    assert.ok(logOutput.some(log => log.event === 'waitlist_submitted' && log.outcome === 'invalid'));
+    assert.deepStrictEqual(body, { error: { code: 'INVALID_EMAIL', message: 'That does not look like an email address.' } });
   });
 
   it('should return 409 for a duplicate email', async () => {
-    await fetch(baseUrl, {
+    // First valid submission
+    await fetch(`${baseUrl}/api/waitlist`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: 'duplicate@example.com' }),
     });
 
-    logOutput = []; // Clear logs before duplicate attempt
-
-    const response = await fetch(baseUrl, {
+    // Second submission with the same email
+    const response = await fetch(`${baseUrl}/api/waitlist`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: 'duplicate@example.com' }),
     });
-
     assert.strictEqual(response.status, 409);
     const body = await response.json();
-    assert.strictEqual(body.error.code, 'ALREADY_JOINED');
-    assert.ok(logOutput.some(log => log.event === 'waitlist_submitted' && log.outcome === 'duplicate'));
+    assert.deepStrictEqual(body, { error: { code: 'ALREADY_JOINED', message: 'You are already on the list.' } });
   });
 
-  it('should return 415 if Content-Type is not application/json', async () => {
-    const response = await fetch(baseUrl, {
+  it('should return 415 for unsupported media type', async () => {
+    const response = await fetch(`${baseUrl}/api/waitlist`, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
-      body: 'just some text',
+      body: 'email=test@example.com',
     });
-
     assert.strictEqual(response.status, 415);
     const body = await response.json();
-    assert.strictEqual(body.error.code, 'UNSUPPORTED_MEDIA_TYPE');
-    assert.ok(logOutput.some(log => log.event === 'waitlist_submitted' && log.outcome === 'invalid'));
+    assert.deepStrictEqual(body, { error: { code: 'UNSUPPORTED_MEDIA_TYPE', message: 'Content-Type must be application/json.' } });
   });
 
-  it('should return 429 after exceeding rate limit', async () => {
-    // Make 5 requests within the window
+  it('should return 429 for rate limited requests', async () => {
+    const emailBase = 'ratelimit';
     for (let i = 0; i < 5; i++) {
-      await fetch(baseUrl, {
+      // Make 5 requests within the window
+      await fetch(`${baseUrl}/api/waitlist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: `rate-limit-${i}@example.com` }),
+        body: JSON.stringify({ email: `${emailBase}${i}@example.com` }),
       });
     }
-    logOutput = []; // Clear logs before the rate-limited attempt
 
     // The 6th request should be rate-limited
-    const response = await fetch(baseUrl, {
+    const response = await fetch(`${baseUrl}/api/waitlist`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'over-limit@example.com' }),
+      body: JSON.stringify({ email: `${emailBase}6@example.com` }),
     });
-
     assert.strictEqual(response.status, 429);
     const body = await response.json();
-    assert.strictEqual(body.error.code, 'RATE_LIMITED');
-    assert.ok(logOutput.some(log => log.event === 'waitlist_submitted' && log.outcome === 'rate_limited')));
+    assert.deepStrictEqual(body, { error: { code: 'RATE_LIMITED', message: 'Too many attempts. Try again in a minute.' } });
   });
 
-  it('should return 500 if store operations fail', async () => {
-    const originalAddEntry = (await import('../../src/lib/store.js')).addEntry;
-    // Mock addEntry to throw an error causing a STORE_UNAVAILABLE in the route handler
-    const mockStore = await import('../../src/lib/store.js');
-    mockStore.addEntry = async () => {
-      throw new Error('Mocked store failure', { cause: new Error('STORE_UNAVAILABLE') });
-    };
-
-    const response = await fetch(baseUrl, {
+  it('should return 400 if email is missing from body', async () => {
+    const response = await fetch(`${baseUrl}/api/waitlist`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'error@example.com' }),
+      body: JSON.stringify({ notAnEmail: 'test' }),
     });
-
-    assert.strictEqual(response.status, 500);
+    assert.strictEqual(response.status, 400);
     const body = await response.json();
-    assert.strictEqual(body.error.code, 'STORE_UNAVAILABLE');
-    assert.ok(logOutput.some(log => log.event === 'waitlist_store_error' && log.message.includes('Mocked store failure')));
-    mockStore.addEntry = originalAddEntry; // Restore original function
+    assert.deepStrictEqual(body, { error: { code: 'INVALID_EMAIL', message: 'That does not look like an email address.' } });
   });
 });

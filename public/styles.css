@@ -536,3 +536,212 @@ details[open] .faq__chevron {
     transition-duration: 0ms !important;
   }
 }
+
+/* Skip Link */
+.skip-link {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  border: var(--border);
+  border-radius: var(--radius-md);
+  z-index: 1000;
+  transform: translateY(-150%);
+  transition: transform var(--duration-base) var(--ease);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition-duration: 0ms !important;
+  }
+}
+
+/* Site Header */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--color-surface);
+  height: 64px; /* As per P-01 Header spec */
+  display: flex; /* To center content vertically */
+  align-items: center; /* To center content vertically */
+  border-bottom: 1px solid transparent; /* Default state for border */
+  transition: border-color var(--duration-fast) var(--ease);
+}
+
+.site-header.scrolled {
+  border-color: var(--color-border);
+}
+
+.site-header__content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.site-header__wordmark {
+  font-family: var(--font-sans);
+  font-size: var(--text-h3); /* A good base size for a wordmark that isn't the hero headline */
+  font-weight: 800; /* Display weight from wordmark spec */
+  letter-spacing: -0.02em; /* Tight letter-spacing from wordmark spec */
+  color: var(--color-ink);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.site-header__wordmark span {
+  color: var(--color-accent); /* Lamp dot color */
+  font-size: 0.8em; /* Adjust dot size relative to text */
+  line-height: 1;
+}
+
+.site-header__nav {
+  display: flex;
+  gap: var(--space-4);
+  margin-left: auto; /* Push nav to the right */
+}
+
+/* Hide anchor links below 640px */
+@media (max-width: 640px) {
+  .site-header__nav {
+    display: none;
+  }
+}
+
+.site-header__waitlist-btn {
+  margin-left: var(--space-4); /* Space between nav and button */
+}
+
+@media (max-width: 640px) {
+  .site-header__waitlist-btn {
+    margin-left: auto; /* Push button to right when nav is hidden */
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header {
+    transition-duration: 0ms !important;
+  }
+}
+
+/* Site Footer */
+.site-footer {
+  background-color: var(--color-footer);
+  color: var(--color-ink-faint);
+  padding-top: var(--space-9);
+  padding-bottom: var(--space-9);
+  font-size: var(--text-small);
+}
+
+.site-footer__content {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+  margin-bottom: var(--space-7);
+}
+
+@media (max-width: 640px) {
+  .site-footer__content {
+    grid-template-columns: 1fr;
+    gap: var(--space-7);
+  }
+}
+
+.site-footer__brand .site-footer__wordmark {
+  font-family: var(--font-sans);
+  font-size: var(--text-h3);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-surface); /* White on dark footer */
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+.site-footer__brand .site-footer__wordmark span {
+  color: var(--color-accent); /* Lamp dot color */
+  font-size: 0.8em;
+  line-height: 1;
+}
+
+.site-footer__description {
+  max-width: none; /* Override paragraph max-width */
+  margin-bottom: 0;
+}
+
+.site-footer__heading {
+  font-size: var(--text-body); /* Should be readable, not too big */
+  line-height: 1.6;
+  font-weight: 600; /* Slightly bolder for heading */
+  color: var(--color-surface); /* White on dark footer */
+  margin-bottom: var(--space-4);
+}
+
+.site-footer__links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.site-footer__links li {
+  margin-bottom: var(--space-2);
+}
+
+.site-footer__links li:last-child {
+  margin-bottom: 0;
+}
+
+.site-footer__links a {
+  color: var(--color-ink-faint);
+  text-decoration: none;
+}
+
+.site-footer__links a:hover {
+  text-decoration: underline;
+}
+
+.site-footer__caption {
+  font-size: var(--text-small);
+  color: var(--color-ink-faint);
+  margin-top: var(--space-4); /* Space above caption */
+  margin-bottom: 0;
+  max-width: none;
+}
+
+.site-footer__copyright {
+  text-align: center;
+  margin-top: var(--space-7); /* Space above copyright */
+  margin-bottom: 0;
+  max-width: none;
+}
+
+@media (max-width: 640px) {
+  .site-footer__column {
+    text-align: center;
+  }
+  .site-footer__heading {
+    text-align: center;
+  }
+  .site-footer__links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .site-footer__caption {
+    text-align: center;
+  }
+  .site-footer__brand {
+    text-align: center;
+  }
+}

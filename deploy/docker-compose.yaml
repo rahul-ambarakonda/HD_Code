@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - waitlist_data:/app/data
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+
+volumes:
+  waitlist_data:

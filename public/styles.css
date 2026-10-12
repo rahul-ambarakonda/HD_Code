@@ -492,7 +492,7 @@ p {
   margin-top: var(--space-6);
   text-align: center;
   font-size: var(--text-small);
-  color: var(--color-ink-faint); /* Using faint as per description, although copy says ink-soft */
+  color: var(--color-ink-soft); /* Corrected from faint to soft as per copy deck */
 }
 
 /* FAQ Section */
@@ -533,11 +533,6 @@ p {
 
 .faq__item[open] .faq__question::after {
   transform: translateY(-50%) rotate(-180deg);
-}
-
-.faq__item .faq__answer {
-  padding-bottom: var(--space-4);
-  color: var(--color-ink-soft);
 }
 
 .faq__question:focus-visible {

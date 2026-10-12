@@ -745,3 +745,60 @@ details[open] .faq__chevron {
     text-align: center;
   }
 }
+
+/* Hero Section */
+.hero__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 720px; /* Max width for hero content */
+  margin-inline: auto;
+}
+
+.hero__headline {
+  font-size: var(--text-display);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-4); /* From global heading margin */
+  margin-top: var(--space-4); /* Space below chip and above headline */
+}
+
+.hero__lead {
+  font-size: var(--text-lead);
+  line-height: 1.55;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--color-ink-soft);
+  margin-bottom: var(--space-6);
+}
+
+.hero__btn-row {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-7);
+}
+
+.hero__pulse-graphic {
+  width: 480px;
+  height: 120px;
+}
+
+/* Responsive styles for hero buttons */
+@media (max-width: 640px) {
+  .hero__btn-row {
+    flex-direction: column;
+    width: 100%;
+    gap: var(--space-3);
+  }
+
+  .hero__btn-row .btn {
+    width: 100%;
+  }
+
+  .hero__pulse-graphic {
+    width: 100%; /* Make pulse graphic responsive */
+    height: auto; /* Maintain aspect ratio */
+  }
+}

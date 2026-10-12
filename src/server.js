@@ -1,7 +1,13 @@
+/**
+ * @file Main Express application server.
+ */
+
 import express from 'express';
 import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { waitlistRouter } from './routes/waitlist.js';
+import { healthRouter } from './routes/health.js';
 
 // Helper for logging
 const log = (event, fields = {}) => {
@@ -30,6 +36,10 @@ app.use(helmet({
     },
   },
 }));
+
+// Register routes
+app.use('/healthz', healthRouter(log));
+app.use('/api/waitlist', waitlistRouter(log));
 
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, '..', 'public')));

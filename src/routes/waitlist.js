@@ -2,7 +2,7 @@
  * @file Implements the /api/waitlist POST endpoint.
  */
 
-import { Router } from 'express';
+import express, { Router } from 'express'; // Added express import
 import rateLimit from 'express-rate-limit';
 import { isValidEmail } from '../lib/validate.js';
 import { hasEmail, addEntry } from '../lib/store.js';
@@ -22,11 +22,14 @@ export function waitlistRouter(log) {
       },
     },
     handler: (req, res, next, options) => {
-      log({
-        type: 'waitlist_submitted',
-        outcome: 'rate_limited',
-        ip: req.ip,
-      });
+      // Log the rate limit event only if it's not a preflight check or other internal express error
+      if (req.method === 'POST') {
+        log({
+          type: 'waitlist_submitted',
+          outcome: 'rate_limited',
+          ip: req.ip,
+        });
+      }
       res.status(options.statusCode).send(options.message);
     },
   });
@@ -52,7 +55,7 @@ export function waitlistRouter(log) {
       next();
     },
     // Body parsing middleware (limit to 1kb as per API contract)
-    Router().use(Router().json({ limit: '1kb' })),
+    express.json({ limit: '1kb' }), // Simplified middleware application
     async (req, res) => {
       const { email } = req.body;
       const ip = req.ip; // Already configured with trust proxy in server.js
@@ -94,12 +97,15 @@ export function waitlistRouter(log) {
         });
         return res.status(201).json({ status: 'joined' });
       } catch (error) {
+        // Log the actual error that caused the store failure
         log({
           type: 'waitlist_store_error',
-          message: error.message,
+          message: error.message, // Capture the message from the thrown error
           ip: ip,
         });
-        // Distinguish between STORE_UNAVAILABLE and other errors if necessary, but 500 is common for general server errors
+
+        // The addEntry function now throws an error with a 'cause' property if it's a STORE_UNAVAILABLE type error.
+        // Check if the original error was related to store unavailability.
         if (error.cause && error.cause.message === 'STORE_UNAVAILABLE') {
            return res.status(500).json({
              error: {
@@ -109,6 +115,7 @@ export function waitlistRouter(log) {
            });
         }
 
+        // Generic server error for any other unexpected issues
         return res.status(500).json({
           error: {
             code: 'INTERNAL_SERVER_ERROR',
